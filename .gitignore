@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables (CRITICAL - DON'T UPLOAD API KEYS)
+.env
+*.env
+
+# Database
+backend/database.json
+backend/lostfound.db
+
+# Build outputs
+frontend/dist/
+frontend/build/
+
+# System files
+.DS_Store
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
