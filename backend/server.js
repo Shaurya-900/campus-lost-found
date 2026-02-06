@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://localhost:3000'
+  origin: process.env.FRONTEND_URL || '*' // Allow all origins if env var missing (safer for debugging)
 }));
 app.use(express.json({ limit: '50mb' }));
 
@@ -104,6 +104,6 @@ app.get('/api/items', (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
