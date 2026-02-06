@@ -10,7 +10,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'https://localhost:3000'
+}));
 app.use(express.json({ limit: '50mb' }));
 
 // Health check
