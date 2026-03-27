@@ -1,95 +1,101 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { createClient } from '@libsql/client';
+import dotenv from 'dotenv';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const DB_FILE = path.join(__dirname, 'database.json');
+dotenv.config();
 
-function readDB() {
-  if (!fs.existsSync(DB_FILE)) {
-    return { items: [], matches: [] };
-  }
-  const data = fs.readFileSync(DB_FILE, 'utf-8');
-  return JSON.parse(data);
-}
-
-function writeDB(data) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
-}
+const client = createClient({
+  url: process.env.TURSO_CONNECTION_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN
+});
 
 export function insertItem(type, imageBase64, location, note, aiTags) {
-  const db = readDB();
-  const id = db.items.length + 1;
-  
-  const item = {
-    id,
-    type,
-    image_base64: imageBase64,
-    location,
-    note,
-    ai_tags: JSON.stringify(aiTags),
-    item_type: aiTags.item_type || '',
-    color: aiTags.color || '',
-    material: aiTags.material || '',
-    condition: aiTags.condition || '',
-    created_at: new Date().toISOString()
-  };
-  
-  db.items.push(item);
-  writeDB(db);
-  
-  return id;
+  const result = client.execute({
+    sql: 'INSERT INTO items (type, image_base64, location, note, ai_tags, created_at) VALUES (?, ?, ?, ?, ?, ?) RETURNING id',
+    args: [type, imageBase64, location, note, JSON.stringify(aiTags), new Date().toISOString()]
+  });
+  return result.lastInsertRowid;
 }
 
 export function getItemById(id) {
-  const db = readDB();
-  return db.items.find(item => item.id === id);
+  const result =client.execute({
+    sql: 'SELECT * FROM items WHERE id = ?',
+    args: [id]
+  });
+  return result.rows.map(row => ({
+    id: row.id,
+    type: row.type,
+    image_base64: row.image_base64,
+    location: row.location,
+    note: row.note,
+    ai_tags: row.ai_tags,
+    created_at: row.created_at
+  }))[0]; 
 }
 
 export function getItemsByType(type) {
-  const db = readDB();
-  return db.items.filter(item => item.type === type);
+  const result = client.execute({
+    sql: ' SELECT * FROM items WHERE type= ?',
+    args: [type]
+  });
+  return result.rows.map(row => ({
+    id: row.id,
+    type: row.type,
+    image_base64: row.image_base64,
+    location: row.location,
+    note: row.note,
+    ai_tags: row.ai_tags,
+    created_at: row.created_at
+  }));
 }
 
+
 export function getAllItems() {
-  const db = readDB();
-  return db.items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const result = client.execute({
+    sql: 'SELECT * FROM items ORDER BY created_at DESC'
+  });
+  return result.rows.map(row => ({
+    id: row.id,
+    type: row.type,
+    image_base64: row.image_base64,
+    location: row.location,
+    note: row.note,
+    ai_tags: row.ai_tags,
+    created_at: row.created_at
+  }))
 }
 
 export function insertMatch(lostId, foundId, confidence) {
-  const db = readDB();
-  const id = db.matches.length + 1;
-  
-  const match = {
-    id,
-    lost_id: lostId,
-    found_id: foundId,
-    confidence,
-    created_at: new Date().toISOString()
-  };
-  
-  db.matches.push(match);
-  writeDB(db);
-  
-  return id;
+  const result = client.execute({
+    sql: 'INSERT INTO matches (lost_id, found_id, confidence, created_at) VALUES (?, ?, ?, ?) RETURNING id',
+    args: [lostId, foundId, confidence, new Date().toISOString()]
+  });
+  return result.lastInsertRowid;
 }
 
 export function getMatches() {
-  const db = readDB();
+
+  const result = client.execute({
+    sql: `SELECT 
+            m.id, m.lost_id, m.found_id, m.confidence, m.created_at,
+            li.image_base64 as lost_image, li.ai_tags as lost_tags, li.location as lost_location,
+            fi.image_base64 as found_image, fi.ai_tags as found_tags, fi.location as found_location
+          FROM matches m
+          JOIN items li ON m.lost_id = li.id
+          JOIN items fi ON m.found_id = fi.id
+          ORDER BY m.created_at DESC`
+  });
   
-  return db.matches.map(match => {
-    const lostItem = db.items.find(i => i.id === match.lost_id);
-    const foundItem = db.items.find(i => i.id === match.found_id);
-    
-    return {
-      ...match,
-      lost_image: lostItem?.image_base64,
-      lost_tags: lostItem?.ai_tags,
-      lost_location: lostItem?.location,
-      found_image: foundItem?.image_base64,
-      found_tags: foundItem?.ai_tags,
-      found_location: foundItem?.location
-    };
-  }).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  return result.rows.map(row => ({
+    id: row.id,
+    lost_id: row.lost_id,
+    found_id: row.found_id,
+    confidence: row.confidence,
+    created_at: row.created_at,
+    lost_image: row.lost_image,
+    lost_tags: row.lost_tags,
+    lost_location: row.lost_location,
+    found_image: row.found_image,
+    found_tags: row.found_tags,
+    found_location: row.found_location
+  }));
 }
