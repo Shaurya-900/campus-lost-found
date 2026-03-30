@@ -40,11 +40,11 @@ app.post('/api/report', async (req, res) => {
     console.log('AI Tags:', aiTags);
     
     // Insert into database
-    const itemId = insertItem(type, image, location, note, aiTags);
+    const itemId = await insertItem(type, image, location, note, aiTags);
     
     // Find matches
     const oppositeType = type === 'lost' ? 'found' : 'lost';
-    const oppositeItems = getItemsByType(oppositeType);
+    const oppositeItems = await getItemsByType(oppositeType);
     
     const newItem = {
       id: itemId,
@@ -55,20 +55,18 @@ app.post('/api/report', async (req, res) => {
       ai_tags: JSON.stringify(aiTags)
     };
     
-    const matches = findMatches(newItem, oppositeItems, 50);
+    const matches = await findMatches(newItem, oppositeItems, 50);
     
     console.log(`Found ${matches.length} potential matches`);
     
     // Store matches in database
     for (const match of matches) {
       if (type === 'lost') {
-        insertMatch(itemId, match.item.id, match.confidence);
+        await insertMatch(itemId, match.item.id, match.confidence);
       } else {
-        insertMatch(match.item.id, itemId, match.confidence);
+        await insertMatch(match.item.id, itemId, match.confidence);
       }
     }
-    console.log('matches:', matches);
-    console.log('matches type:', Array.isArray(matches));
     res.json({
       success: true,
       itemId,
@@ -84,9 +82,9 @@ app.post('/api/report', async (req, res) => {
 });
 
 // Get all matches
-app.get('/api/matches', (req, res) => {
+app.get('/api/matches', async (req, res) => {
   try {
-    const matches = getMatches();
+    const matches = await getMatches();
     res.json(matches);
   } catch (error) {
     console.error('Matches error:', error);
@@ -95,9 +93,9 @@ app.get('/api/matches', (req, res) => {
 });
 
 // Get all items
-app.get('/api/items', (req, res) => {
+app.get('/api/items', async (req, res) => {
   try {
-    const items = getAllItems();
+    const items = await getAllItems();
     res.json(items);
   } catch (error) {
     console.error('Items error:', error);

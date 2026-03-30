@@ -8,16 +8,16 @@ const client = createClient({
   authToken: process.env.TURSO_AUTH_TOKEN
 });
 
-export function insertItem(type, imageBase64, location, note, aiTags) {
-  const result = client.execute({
+export async function insertItem(type, imageBase64, location, note, aiTags) {
+  const result = await client.execute({
     sql: 'INSERT INTO items (type, image_base64, location, note, ai_tags, created_at) VALUES (?, ?, ?, ?, ?, ?) RETURNING id',
     args: [type, imageBase64, location, note, JSON.stringify(aiTags), new Date().toISOString()]
   });
-  return result.lastInsertRowid;
+  return Number(result.lastInsertRowid);
 }
 
-export function getItemById(id) {
-  const result =client.execute({
+export async function getItemById(id) {
+  const result = await client.execute({
     sql: 'SELECT * FROM items WHERE id = ?',
     args: [id]
   });
@@ -32,8 +32,8 @@ export function getItemById(id) {
   }))[0]; 
 }
 
-export function getItemsByType(type) {
-  const result = client.execute({
+export async function getItemsByType(type) {
+  const result = await client.execute({
     sql: ' SELECT * FROM items WHERE type= ?',
     args: [type]
   });
@@ -49,8 +49,8 @@ export function getItemsByType(type) {
 }
 
 
-export function getAllItems() {
-  const result = client.execute({
+export async function getAllItems() {
+  const result = await client.execute({
     sql: 'SELECT * FROM items ORDER BY created_at DESC'
   });
   return result.rows.map(row => ({
@@ -64,17 +64,16 @@ export function getAllItems() {
   }))
 }
 
-export function insertMatch(lostId, foundId, confidence) {
-  const result = client.execute({
+export async function insertMatch(lostId, foundId, confidence) {
+  const result = await client.execute({
     sql: 'INSERT INTO matches (lost_id, found_id, confidence, created_at) VALUES (?, ?, ?, ?) RETURNING id',
     args: [lostId, foundId, confidence, new Date().toISOString()]
   });
-  return result.lastInsertRowid;
+  return Number(result.lastInsertRowid);
 }
 
-export function getMatches() {
-
-  const result = client.execute({
+export async function getMatches() {
+  const result = await client.execute({
     sql: `SELECT 
             m.id, m.lost_id, m.found_id, m.confidence, m.created_at,
             li.image_base64 as lost_image, li.ai_tags as lost_tags, li.location as lost_location,
