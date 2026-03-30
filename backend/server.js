@@ -67,7 +67,8 @@ app.post('/api/report', async (req, res) => {
         insertMatch(match.item.id, itemId, match.confidence);
       }
     }
-    
+    console.log('matches:', matches);
+    console.log('matches type:', Array.isArray(matches));
     res.json({
       success: true,
       itemId,
