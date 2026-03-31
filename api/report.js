@@ -1,5 +1,5 @@
 // api/report.js
-import { insertItem, getItemsByType, insertMatch } from '../database.js';
+import { insertItem, getItemsByType, insertMatch } from '../lib/database.js';
 import { analyzeImage } from '../lib/gemini.js';
 import { findMatches } from '../lib/matcher.js';
 
