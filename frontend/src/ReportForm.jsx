@@ -189,5 +189,33 @@ function ReportForm({ type, onComplete }) {
     </div>
   );
 }
-
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // Compress image before storing
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Scale down to max 800px width
+        const maxWidth = 800;
+        const scale = maxWidth / img.width;
+        canvas.width = maxWidth;
+        canvas.height = img.height * scale;
+        
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        
+        // Convert to JPEG with lower quality
+        const compressed = canvas.toDataURL('image/jpeg', 0.7);
+        setImage(compressed);
+        setImagePreview(compressed);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+};
 export default ReportForm;
