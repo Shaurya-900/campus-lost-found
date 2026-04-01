@@ -25,7 +25,7 @@ function Matches() {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="text-4xl mb-4">⏳</div>
+        <div className="text-4xl mb-4"></div>
         <p className="text-xl text-gray-600">Loading matches...</p>
       </div>
     );
@@ -34,7 +34,7 @@ function Matches() {
   if (matches.length === 0) {
     return (
       <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-12 text-center">
-        <div className="text-6xl mb-4">🔍</div>
+        <div className="text-6xl mb-4"></div>
         <h2 className="text-2xl font-bold text-gray-800 mb-2">No Matches Yet</h2>
         <p className="text-gray-600">Start reporting lost or found items to see matches!</p>
       </div>
@@ -44,7 +44,7 @@ function Matches() {
   return (
     <div className="max-w-6xl mx-auto">
       <h2 className="text-4xl font-bold text-gray-800 mb-8 text-center">
-        🔗 All Matches ({matches.length})
+        All Matches ({matches.length})
       </h2>
 
       <div className="space-y-6">
@@ -63,7 +63,7 @@ function Matches() {
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="border-2 border-red-200 rounded-xl p-4 bg-red-50">
-                  <h4 className="text-xl font-bold text-red-700 mb-3">😢 Lost Item</h4>
+                  <h4 className="text-xl font-bold text-red-700 mb-3">Lost Item</h4>
                   <img 
                     src={match.lost_image} 
                     alt="Lost item"
@@ -77,7 +77,7 @@ function Matches() {
                 </div>
 
                 <div className="border-2 border-green-200 rounded-xl p-4 bg-green-50">
-                  <h4 className="text-xl font-bold text-green-700 mb-3">🎉 Found Item</h4>
+                  <h4 className="text-xl font-bold text-green-700 mb-3">Found Item</h4>
                   <img 
                     src={match.found_image} 
                     alt="Found item"

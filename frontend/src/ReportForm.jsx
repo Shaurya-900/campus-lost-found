@@ -78,10 +78,10 @@ function ReportForm({ type, onComplete }) {
     return (
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-2xl shadow-2xl p-8">
-          <h2 className="text-3xl font-bold text-green-600 mb-6">✅ Item Reported Successfully!</h2>
+          <h2 className="text-3xl font-bold text-green-600 mb-6">Item Reported Successfully!</h2>
           
           <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
-            <h3 className="text-xl font-bold text-blue-900 mb-3">🤖 AI Analysis (Google Gemini Vision)</h3>
+            <h3 className="text-xl font-bold text-blue-900 mb-3">AI Analysis (Google Gemini Vision)</h3>
             <div className="bg-white rounded-lg p-4 font-mono text-sm">
               <pre>{JSON.stringify(result.aiTags, null, 2)}</pre>
             </div>
@@ -90,7 +90,7 @@ function ReportForm({ type, onComplete }) {
           {result.matchesFound > 0 ? (
             <div className="bg-green-50 border-2 border-green-300 rounded-xl p-6 mb-6">
               <h3 className="text-2xl font-bold text-green-700 mb-4">
-                🎯 {result.matchesFound} Potential Match{result.matchesFound > 1 ? 'es' : ''} Found!
+                {result.matchesFound} Potential Match{result.matchesFound > 1 ? 'es' : ''} Found!
               </h3>
               {result.matches.map((match, idx) => (
                 <div key={idx} className="bg-white rounded-lg p-4 mb-4 border-2 border-green-200">
@@ -194,7 +194,7 @@ function ReportForm({ type, onComplete }) {
                 : 'bg-indigo-600 hover:bg-indigo-700'
             }`}
           >
-            {loading ? '🤖 AI Analyzing Image...' : `Submit ${type === 'lost' ? 'Lost' : 'Found'} Item`}
+            {loading ? 'AI Analyzing Image...' : `Submit ${type === 'lost' ? 'Lost' : 'Found'} Item`}
           </button>
         </form>
       </div>
