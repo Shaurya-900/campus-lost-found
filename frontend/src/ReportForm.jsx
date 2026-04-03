@@ -26,7 +26,7 @@ function ReportForm({ type, onComplete }) {
           canvas.width = img.width * scale;
           canvas.height = img.height * scale;
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          const compressed = canvas.toDataURL('image/jpeg', 0.7);
+          const compressed = canvas.toDataURL('image/jpeg', 0.5);
           setImage(compressed);
           setImagePreview(compressed);
         };
