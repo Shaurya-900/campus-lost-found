@@ -194,7 +194,7 @@ function ReportForm({ type, onComplete }) {
                 : 'bg-indigo-600 hover:bg-indigo-700'
             }`}
           >
-            {loading ? 'AI Analyzing Image...' : `Submit ${type === 'lost' ? 'Lost' : 'Found'} Item`}
+            {loading ? 'Analyzing image (may take 10-15 seconds)...' : `Submit ${type === 'lost' ? 'Lost' : 'Found'} Item`}
           </button>
         </form>
       </div>
