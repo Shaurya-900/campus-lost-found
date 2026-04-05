@@ -29,10 +29,10 @@ export default async function handler(req, res) {
     const aiTags = await analyzeImage(image);
     console.log('AI Tags:', aiTags);
     
-    const itemId = await insertItem(type, image, location, note, aiTags);
-    
-    const oppositeType = type === 'lost' ? 'found' : 'lost';
-    const oppositeItems = await getItemsByType(oppositeType);
+    //const itemId = await insertItem(type, image, location, note, aiTags);
+    const itemId = Math.floor(Math.random() * 10000); // Fake ID
+    //const oppositeType = type === 'lost' ? 'found' : 'lost';
+    const oppositeItems = [];
     
     const newItem = {
       id: itemId,
@@ -47,13 +47,13 @@ export default async function handler(req, res) {
     
     console.log(`Found ${matches.length} potential matches`);
     
-    for (const match of matches) {
-      if (type === 'lost') {
-        await insertMatch(itemId, match.item.id, match.confidence);
-      } else {
-        await insertMatch(match.item.id, itemId, match.confidence);
-      }
-    }
+    //for (const match of matches) {
+      //if (type === 'lost') {
+        //await insertMatch(itemId, match.item.id, match.confidence);
+      //} else {
+        //await insertMatch(match.item.id, itemId, match.confidence);
+      //}
+    //}
     
     res.json({
       success: true,
