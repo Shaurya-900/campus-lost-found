@@ -1,18 +1,14 @@
-import { insertItem, getItemsByType, insertMatch } from '../lib/database.js';
+// api/report.js
+import { insertItem, getItemsByType, insertMatch } from '../database.js';
 import { analyzeImage } from '../lib/gemini.js';
 import { findMatches } from '../lib/matcher.js';
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+  // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
   try {
     const { type, image, location, note } = req.body;
     
@@ -29,10 +25,10 @@ export default async function handler(req, res) {
     const aiTags = await analyzeImage(image);
     console.log('AI Tags:', aiTags);
     
-    //const itemId = await insertItem(type, image, location, note, aiTags);
-    const itemId = Math.floor(Math.random() * 10000); // Fake ID
-    //const oppositeType = type === 'lost' ? 'found' : 'lost';
-    const oppositeItems = [];
+    const itemId = await insertItem(type, image, location, note, aiTags);
+    
+    const oppositeType = type === 'lost' ? 'found' : 'lost';
+    const oppositeItems = await getItemsByType(oppositeType);
     
     const newItem = {
       id: itemId,
@@ -47,13 +43,13 @@ export default async function handler(req, res) {
     
     console.log(`Found ${matches.length} potential matches`);
     
-    //for (const match of matches) {
-      //if (type === 'lost') {
-        //await insertMatch(itemId, match.item.id, match.confidence);
-      //} else {
-        //await insertMatch(match.item.id, itemId, match.confidence);
-      //}
-    //}
+    for (const match of matches) {
+      if (type === 'lost') {
+        await insertMatch(itemId, match.item.id, match.confidence);
+      } else {
+        await insertMatch(match.item.id, itemId, match.confidence);
+      }
+    }
     
     res.json({
       success: true,
