@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     const items = await getAllItems();
     res.json(items);
   } catch (error) {
-    console.error('Items error:', error);
-    res.status(500).json({ error: error.message });
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Something went wrong. Please try again.' });
   }
 }

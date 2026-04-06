@@ -64,11 +64,12 @@ function ReportForm({ type, onComplete }) {
       if (data.success) {
         setResult(data);
       } else {
-        alert('Error: ' + (data.error || 'Unknown error'));
+        console.error('Error:', data.error);
+        setResult({ error: data.error || 'Failed to submit' });
       }
     } catch (error) {
       console.error('Submit error:', error);
-      alert('Failed to submit. Make sure the backend is running.');
+      setResult({ error: 'Failed to submit. Make sure the backend is running.' });
     } finally {
       setLoading(false);
     }
