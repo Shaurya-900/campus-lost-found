@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     const matches = await getMatches();
     res.json(matches);
   } catch (error) {
-    console.error('Matches error:', error);
-    res.status(500).json({ error: error.message });
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Something went wrong. Please try again.' });
   }
 }
