@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 function Matches() {
   const [matches, setMatches] = useState([]);
@@ -14,7 +14,7 @@ function Matches() {
     try {
       const response = await fetch(`${API_URL}/matches`);
       const data = await response.json();
-      setMatches(data);
+      setMatches(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch matches:', error);
     } finally {
@@ -49,8 +49,14 @@ function Matches() {
 
       <div className="space-y-6">
         {matches.map((match) => {
-          const lostTags = JSON.parse(match.lost_tags);
-          const foundTags = JSON.parse(match.found_tags);
+          let lostTags = {};
+          let foundTags = {};
+          try {
+            lostTags = match.lost_tags ? JSON.parse(match.lost_tags) : {};
+            foundTags = match.found_tags ? JSON.parse(match.found_tags) : {};
+          } catch (e) {
+            console.warn('Failed to parse tags:', e);
+          }
           
           return (
             <div key={match.id} className="bg-white rounded-2xl shadow-xl p-6">
