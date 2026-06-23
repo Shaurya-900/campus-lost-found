@@ -21,12 +21,15 @@ function ReportForm({ type, onComplete }) {
         img.onload = () => {
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
-          const maxWidth = 800;
+          // Keep the stored base64 small. The Turso HTTP client stalls on larger
+          // image rows (~80KB+), so downscale + compress harder to stay well under
+          // that so images store and load reliably.
+          const maxWidth = 600;
           const scale = Math.min(1, maxWidth / img.width);
           canvas.width = img.width * scale;
           canvas.height = img.height * scale;
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          const compressed = canvas.toDataURL('image/jpeg', 0.5);
+          const compressed = canvas.toDataURL('image/jpeg', 0.45);
           setImage(compressed);
           setImagePreview(compressed);
         };

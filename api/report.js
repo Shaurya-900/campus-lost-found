@@ -1,5 +1,5 @@
 // api/report.js
-import { insertItem, getItemsByType, getItemById, insertMatch } from '../lib/database.js';
+import { insertItem, getItemsByType, getItemImage, insertMatch } from '../lib/database.js';
 import { analyzeImage } from '../lib/gemini.js';
 import { findMatches } from '../lib/matcher.js';
 
@@ -55,8 +55,8 @@ export default async function handler(req, res) {
     // matches we return, since the frontend renders their thumbnails.
     const topMatches = matches.slice(0, 3);
     const hydratedMatches = await Promise.all(topMatches.map(async (match) => {
-      const full = await getItemById(match.item.id);
-      return { ...match, item: { ...match.item, image_base64: full?.image_base64 } };
+      const image_base64 = await getItemImage(match.item.id);
+      return { ...match, item: { ...match.item, image_base64 } };
     }));
 
     res.json({
