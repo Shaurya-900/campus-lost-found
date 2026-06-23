@@ -1,5 +1,5 @@
 // api/report.js
-import { insertItem, getItemsByType, insertMatch } from '../lib/database.js';
+import { insertItem, getItemsByType, getItemById, insertMatch } from '../lib/database.js';
 import { analyzeImage } from '../lib/gemini.js';
 import { findMatches } from '../lib/matcher.js';
 
@@ -50,13 +50,21 @@ export default async function handler(req, res) {
         await insertMatch(match.item.id, itemId, match.confidence);
       }
     }
-    
+
+    // getItemsByType omits image_base64 for speed; hydrate it only for the few
+    // matches we return, since the frontend renders their thumbnails.
+    const topMatches = matches.slice(0, 3);
+    const hydratedMatches = await Promise.all(topMatches.map(async (match) => {
+      const full = await getItemById(match.item.id);
+      return { ...match, item: { ...match.item, image_base64: full?.image_base64 } };
+    }));
+
     res.json({
       success: true,
       itemId,
       aiTags,
       matchesFound: matches.length,
-      matches: matches.slice(0, 3)
+      matches: hydratedMatches
     });
     
   } catch (error) {
