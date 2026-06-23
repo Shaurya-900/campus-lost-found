@@ -1,10 +1,8 @@
-import { getMatches } from '../lib/database.js';
-
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
+
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -14,10 +12,11 @@ export default async function handler(req, res) {
   }
 
   try {
+    const { getMatches } = await import('../lib/database.js');
     const matches = await getMatches();
     res.json(matches);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Something went wrong. Please try again.' });
+    console.error('matches handler error:', error);
+    res.status(500).json({ error: error.message, stack: error.stack });
   }
 }
