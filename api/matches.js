@@ -1,3 +1,5 @@
+import { getMatches } from '../lib/database.js';
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -11,15 +13,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const dbUrl = process.env.TURSO_CONNECTION_URL ?? '';
-  // expose last 4 chars as hex to detect hidden chars like \n
-  const tail = [...dbUrl.slice(-4)].map(c => c.charCodeAt(0).toString(16)).join(',');
-
   try {
-    const { getMatches } = await import('../lib/database.js');
     const matches = await getMatches();
     res.json(matches);
   } catch (error) {
-    res.status(500).json({ error: error.message, urlLen: dbUrl.length, urlTailHex: tail });
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Something went wrong. Please try again.' });
   }
 }
