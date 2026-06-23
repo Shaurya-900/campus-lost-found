@@ -21,7 +21,6 @@ function App() {
       <div className="container mx-auto px-4 py-8">
         <header className="text-center mb-12">
           <h1 className="text-5xl font-bold text-indigo-900 mb-2">Campus Lost & Found</h1>
-          <p className="text-gray-600">AI-powered item matching using Google Gemini Vision</p>
         </header>
 
         {view === 'home' && (
