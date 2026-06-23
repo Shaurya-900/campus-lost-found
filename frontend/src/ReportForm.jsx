@@ -82,7 +82,6 @@ function ReportForm({ type, onComplete }) {
           <h2 className="text-3xl font-bold text-green-600 mb-6">Item Reported Successfully!</h2>
           
           <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
-            <h3 className="text-xl font-bold text-blue-900 mb-3">AI Analysis (Google Gemini Vision)</h3>
             <div className="bg-white rounded-lg p-4 font-mono text-sm">
               <pre className="mt-1 overflow-x-auto text-xs whitespace-pre-wrap break-words max-h-48">{JSON.stringify(result.aiTags, null, 2)}</pre>
             </div>
