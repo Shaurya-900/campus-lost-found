@@ -9,7 +9,7 @@ AI-powered lost and found system for campus using computer vision to automatical
 ## Features
 
 - **AI Image Analysis** - Google Gemini Vision API extracts item characteristics
-- **Automatic Matching** - Smart algorithm matches lost items with found items based on visual similarity
+- **Automatic Matching** - Weighted word-overlap algorithm matches lost items with found items based on AI-extracted tags (type, color, material, brand), robust to Gemini's non-deterministic phrasing
 - **Persistent Storage** - Turso cloud SQLite database ensures data persists across deployments
 - **Real-time Matching** - See all matches instantly with confidence scores
 - **Simple Interface** - Report lost/found items in under a minute
@@ -158,14 +158,14 @@ GET  /api/items              # Get all items
 
 ## Matching Algorithm
 
-Weighted scoring based on:
-- Item type match: 40 points
-- Color match: 25 points
-- Material match: 15 points
-- Brand match: 20 points
-- Location proximity: 10 points bonus
+Scores are built from weighted Jaccard word-overlap on Gemini's tags, not exact string matching — so "assortment of pastries and donuts" still matches "assorted pastries and donuts":
+- Item type overlap: up to 45 points
+- Color overlap: up to 25 points
+- Material overlap: up to 15 points
+- Brand: 15 points if both items name the same brand
+- Location: 10 point bonus if both items report the same location
 
-Matches above 50% confidence are shown to users.
+Blank/"unknown" fields are ignored entirely (no false matches from missing info). Matches above 50% confidence are shown to users.
 
 ## Future Enhancements
 
