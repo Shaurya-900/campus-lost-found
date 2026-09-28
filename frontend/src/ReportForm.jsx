@@ -33,6 +33,9 @@ function ReportForm({ type, onComplete }) {
           setImage(compressed);
           setImagePreview(compressed);
         };
+        img.onerror = () => {
+          alert('Could not read that image. Please upload a JPG or PNG photo.');
+        };
         img.src = reader.result;
       };
       reader.readAsDataURL(file);
@@ -62,7 +65,7 @@ function ReportForm({ type, onComplete }) {
         })
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
       
       if (data.success) {
         setResult(data);
@@ -72,11 +75,28 @@ function ReportForm({ type, onComplete }) {
       }
     } catch (error) {
       console.error('Submit error:', error);
-      setResult({ error: 'Failed to submit. Make sure the backend is running.' });
+      setResult({ error: 'Failed to submit. Please check your connection and try again.' });
     } finally {
       setLoading(false);
     }
   };
+
+  if (result?.error) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-2xl p-8">
+          <h2 className="text-3xl font-bold text-red-600 mb-4">Couldn't Report Item</h2>
+          <p className="text-lg text-gray-700 mb-6">{result.error}</p>
+          <button
+            onClick={() => setResult(null)}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-xl text-lg font-semibold"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (result) {
     return (
@@ -103,11 +123,17 @@ function ReportForm({ type, onComplete }) {
                       {match.confidence}% Match
                     </span>
                   </div>
-                  <img 
-                    src={match.item.image_base64} 
-                    alt="Matched item"
-                    className="w-full h-48 object-cover rounded-lg"
-                  />
+                  {match.item.image_base64 ? (
+                    <img
+                      src={match.item.image_base64}
+                      alt="Matched item"
+                      className="w-full h-48 object-cover rounded-lg"
+                    />
+                  ) : (
+                    <div className="w-full h-48 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500">
+                      Image unavailable
+                    </div>
+                  )}
                   <p className="mt-2 text-gray-600">Location: {match.item.location}</p>
                 </div>
               ))}

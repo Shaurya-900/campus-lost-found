@@ -70,11 +70,17 @@ function Matches() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="border-2 border-red-200 rounded-xl p-4 bg-red-50">
                   <h4 className="text-xl font-bold text-red-700 mb-3">Lost Item</h4>
-                  <img 
-                    src={match.lost_image} 
-                    alt="Lost item"
-                    className="w-full h-64 object-cover rounded-lg mb-3"
-                  />
+                  {match.lost_image ? (
+                    <img
+                      src={match.lost_image}
+                      alt="Lost item"
+                      className="w-full h-64 object-cover rounded-lg mb-3"
+                    />
+                  ) : (
+                    <div className="w-full h-64 rounded-lg mb-3 bg-gray-100 flex items-center justify-center text-gray-500">
+                      Image unavailable
+                    </div>
+                  )}
                   <p className="text-gray-700 mb-2"><strong>Location:</strong> {match.lost_location}</p>
                   <div className="bg-white rounded p-3 text-sm">
                     <strong>AI Tags:</strong>
@@ -84,11 +90,17 @@ function Matches() {
 
                 <div className="border-2 border-green-200 rounded-xl p-4 bg-green-50">
                   <h4 className="text-xl font-bold text-green-700 mb-3">Found Item</h4>
-                  <img 
-                    src={match.found_image} 
-                    alt="Found item"
-                    className="w-full h-64 object-cover rounded-lg mb-3"
-                  />
+                  {match.found_image ? (
+                    <img
+                      src={match.found_image}
+                      alt="Found item"
+                      className="w-full h-64 object-cover rounded-lg mb-3"
+                    />
+                  ) : (
+                    <div className="w-full h-64 rounded-lg mb-3 bg-gray-100 flex items-center justify-center text-gray-500">
+                      Image unavailable
+                    </div>
+                  )}
                   <p className="text-gray-700 mb-2"><strong>Location:</strong> {match.found_location}</p>
                   <div className="bg-white rounded p-3 text-sm">
                     <strong>AI Tags:</strong>

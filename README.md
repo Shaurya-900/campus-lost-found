@@ -95,14 +95,14 @@ TURSO_CONNECTION_URL=your_turso_url_here
 TURSO_AUTH_TOKEN=your_turso_token_here
 ```
 
-### Frontend Setup
+### Run Locally
+The API lives in `api/` as Vercel serverless functions, so run the full stack with the Vercel CLI from the repo root:
 ```bash
-cd frontend
-npm install
-npm run dev
+cd frontend && npm install && cd ..
+npx vercel dev
 ```
 
-Frontend runs on `http://localhost:3000`
+`npm run dev` inside `frontend/` serves only the UI on `http://localhost:3000`; its `/api` calls will 404 unless you set `VITE_API_URL` to a running backend (e.g. `https://campus-lost-found-serverless.vercel.app/api`).
 
 ## Deployment
 
@@ -114,7 +114,7 @@ Frontend runs on `http://localhost:3000`
    - `GEMINI_MODEL` - `gemini-2.5-flash`
    - `TURSO_CONNECTION_URL` - Your Turso connection URL
    - `TURSO_AUTH_TOKEN` - Your Turso auth token
-   - `VITE_API_URL` - Your deployed Vercel URL with `/api` suffix
+   - `VITE_API_URL` - Optional; defaults to same-origin `/api`
 
 3. Build settings:
    - Build command: `cd frontend && npm install && npm run build`

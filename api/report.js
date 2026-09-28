@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { type, image, location, note } = req.body;
+    const { type, image, location, note } = req.body || {};
     
     if (!type || !image || !location) {
       return res.status(400).json({ error: 'Missing required fields' });
